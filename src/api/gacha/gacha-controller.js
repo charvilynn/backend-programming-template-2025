@@ -3,6 +3,22 @@ const mongoose = require('mongoose');
 const Gacha = mongoose.model('Gacha');
 const Prize = mongoose.model('Prize');
 
+// auto seed hadiah kalau belum ada
+const autoSeedPrizes = async () => {
+  const count = await Prize.countDocuments();
+  if (count === 0) {
+    await Prize.insertMany([
+      { name: 'Emas 10 gram', quota: 1, winnersCount: 0 },
+      { name: 'Smartphone X', quota: 5, winnersCount: 0 },
+      { name: 'Smartwatch Y', quota: 10, winnersCount: 0 },
+      { name: 'Voucher Rp100.000', quota: 100, winnersCount: 0 },
+      { name: 'Pulsa Rp50.000', quota: 500, winnersCount: 0 },
+    ]);
+  }
+};
+
+autoSeedPrizes();
+
 // random hadiah
 const getRandomPrize = (prizes) => {
   const available = prizes.filter((p) => p.winnersCount < p.quota);
@@ -68,14 +84,23 @@ exports.gacha = async (req, res) => {
 
 // GET history
 exports.getHistory = async (req, res) => {
-  const data = await Gacha.find({ userName: req.params.userName });
+  const data = await Gacha.find(
+    { userName: req.params.userName },
+    { _id: 0, __v: 0 }
+  );
   return res.json(data);
 };
 
-// GET hadiah
+// GET hadiah + kuota tersisa
 exports.getPrizes = async (req, res) => {
   const data = await Prize.find();
-  return res.json(data);
+  const result = data.map((p) => ({
+    name: p.name,
+    quota: p.quota,
+    winnersCount: p.winnersCount,
+    quotaRemaining: p.quota - p.winnersCount,
+  }));
+  return res.json(result);
 };
 
 // GET winners (nama disamarkan)
@@ -96,21 +121,4 @@ exports.getWinners = async (req, res) => {
   });
 
   return res.json(masked);
-};
-
-// POST /gacha/seed — isi data hadiah (jalankan sekali)
-exports.seedPrizes = async (req, res) => {
-  try {
-    await Prize.deleteMany();
-    await Prize.insertMany([
-      { name: 'Emas 10 gram', quota: 1, winnersCount: 0 },
-      { name: 'Smartphone X', quota: 5, winnersCount: 0 },
-      { name: 'Smartwatch Y', quota: 10, winnersCount: 0 },
-      { name: 'Voucher Rp100.000', quota: 100, winnersCount: 0 },
-      { name: 'Pulsa Rp50.000', quota: 500, winnersCount: 0 },
-    ]);
-    return res.json({ message: 'Prizes berhasil di-seed!' });
-  } catch (err) {
-    return res.status(500).json(err.message);
-  }
 };
