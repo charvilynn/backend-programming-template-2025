@@ -83,13 +83,34 @@ exports.getWinners = async (req, res) => {
   const data = await Gacha.find({ isWin: true });
 
   const masked = data.map((d) => {
-    let name = d.userName;
-    name = `${name[0]}***`;
+    const name = d.userName;
+    const parts = name.split(' ');
+    const maskedParts = parts.map((part) => {
+      if (part.length <= 1) return part;
+      return `${part[0]}${'*'.repeat(part.length - 1)}`;
+    });
     return {
-      userName: name,
+      userName: maskedParts.join(' '),
       prize: d.prize,
     };
   });
 
   return res.json(masked);
+};
+
+// POST /gacha/seed — isi data hadiah (jalankan sekali)
+exports.seedPrizes = async (req, res) => {
+  try {
+    await Prize.deleteMany();
+    await Prize.insertMany([
+      { name: 'Emas 10 gram', quota: 1, winnersCount: 0 },
+      { name: 'Smartphone X', quota: 5, winnersCount: 0 },
+      { name: 'Smartwatch Y', quota: 10, winnersCount: 0 },
+      { name: 'Voucher Rp100.000', quota: 100, winnersCount: 0 },
+      { name: 'Pulsa Rp50.000', quota: 500, winnersCount: 0 },
+    ]);
+    return res.json({ message: 'Prizes berhasil di-seed!' });
+  } catch (err) {
+    return res.status(500).json(err.message);
+  }
 };
