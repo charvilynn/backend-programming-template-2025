@@ -82,7 +82,7 @@ exports.gacha = async (req, res) => {
   }
 };
 
-// GET history
+// GET history tapi sesuai username
 exports.getHistory = async (req, res) => {
   const data = await Gacha.find(
     { userName: req.params.userName },
@@ -91,6 +91,15 @@ exports.getHistory = async (req, res) => {
   return res.json(data);
 };
 
+// GET history tapi semuanya
+exports.getAllHistory = async (req, res) => {
+  try {
+    const data = await Gacha.find({}, { _id: 0, __v: 0 });
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json(err.message);
+  }
+};
 // GET hadiah + kuota tersisa
 exports.getPrizes = async (req, res) => {
   const data = await Prize.find();
