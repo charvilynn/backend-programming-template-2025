@@ -1,4 +1,4 @@
-const gachaRepository = require('./gacha-repository').default;
+const gachaRepository = require('./gacha-repository');
 
 // random hadiah (ambil yang masih ada quota)
 const getRandomPrize = (prizes) => {
@@ -14,6 +14,11 @@ const getRandomPrize = (prizes) => {
 async function doGacha(userName) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  // 🔥 DEBUG
+  if (!gachaRepository.countTodayGacha) {
+    throw new Error('countTodayGacha tidak ditemukan di repository');
+  }
 
   const count = await gachaRepository.countTodayGacha(userName, today);
 
@@ -62,7 +67,7 @@ async function doGacha(userName) {
   return result;
 }
 
-// history tapi sesuai username
+// history sesuai username
 async function getHistory(userName) {
   return gachaRepository.getHistoryByUser(userName);
 }
@@ -84,6 +89,7 @@ async function getPrizes() {
   }));
 }
 
+// get winners
 async function getWinners() {
   const data = await gachaRepository.getAllHistory();
 

@@ -1,4 +1,7 @@
-const { Gacha, Prize } = require('../../../models/index.js');
+const mongoose = require('mongoose');
+
+const Gacha = mongoose.model('Gacha');
+const Prize = mongoose.model('Prize');
 
 // ambil semua hadiah
 async function getAllPrizes() {
