@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const gachaSchema = new mongoose.Schema({
   userName: String,
-  prize: String, // nama hadiah atau null
+  prize: String,
   isWin: Boolean,
   createdAt: { type: Date, default: Date.now },
 });

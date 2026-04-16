@@ -15,7 +15,6 @@ async function doGacha(userName) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // 🔥 DEBUG
   if (!gachaRepository.countTodayGacha) {
     throw new Error('countTodayGacha tidak ditemukan di repository');
   }

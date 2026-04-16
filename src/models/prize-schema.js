@@ -6,4 +6,4 @@ const prizeSchema = new mongoose.Schema({
   winnersCount: { type: Number, default: 0 },
 });
 
-module.exports = (mg) => mg.model('Prize', prizeSchema);
+module.exports = mongoose.model('Prize', prizeSchema);
