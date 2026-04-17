@@ -31,7 +31,7 @@ async function createGacha(data) {
   return Gacha.create(data);
 }
 
-// update prize (winnersCount)
+// update prize
 async function updatePrize(prize) {
   return prize.save();
 }

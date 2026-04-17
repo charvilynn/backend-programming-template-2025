@@ -3,9 +3,15 @@ const gachaService = require('./gacha-service');
 // POST /gacha
 exports.gacha = async (req, res) => {
   try {
-    const { userName } = req.body;
+    const { userName } = req.body || {};
 
-    const result = await gachaService.doGacha(userName);
+    if (!userName || typeof userName !== 'string' || !userName.trim()) {
+      return res.status(400).json({
+        message: 'userName wajib diisi',
+      });
+    }
+
+    const result = await gachaService.doGacha(userName.trim());
 
     return res.json(result);
   } catch (err) {
@@ -13,7 +19,7 @@ exports.gacha = async (req, res) => {
   }
 };
 
-// GET history tapi sesuai usernamenya
+// GET history sesuai username
 exports.getHistory = async (req, res) => {
   try {
     const data = await gachaService.getHistory(req.params.userName);
