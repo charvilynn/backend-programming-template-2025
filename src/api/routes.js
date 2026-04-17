@@ -11,7 +11,7 @@ module.exports = () => {
   books(app);
   users(app);
 
-  // 🔥 route gacha
+  // route gacha
   app.use('/gacha', gacha);
 
   return app;
